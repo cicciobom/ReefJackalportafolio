@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<!-- Impostiamo 'dark' di default, la preferita dai dev -->
+<html lang="it" class="scroll-smooth dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Portfolio personale di Reef Jackal - Sviluppatore Creativo e Designer">
+    <title>Reef Jackal | Portfolio & Sviluppo Creativo</title>
+    
+    <!-- Importo Tailwind CSS e configuro il Dark Mode basato sulle classi -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {}
+            }
+        }
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@300;500;700&display=swap');
+        
+        /* Animazioni base per lo sfondo */
+        @keyframes blob {
+            0% { transform: translate(0px, 0px) scale(1); }
+            33% { transform: translate(30px, -50px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+            100% { transform: translate(0px, 0px) scale(1); }
+        }
+        .animate-blob { animation: blob 7s infinite; }
+        .animation-delay-2000 { animation-delay: 2s; }
+        .animation-delay-4000 { animation-delay: 4s; }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in-up { animation: fadeInUp 0.8s ease-out forwards; }
+        
+        /* Pattern differenti per light e dark mode gestiti via Tailwind sotto */
+        @keyframes moveGrid {
+            0% { background-position: 0 0; }
+            100% { background-position: 40px 40px; }
+        }
+        .animate-grid { animation: moveGrid 3s linear infinite; }
+
+        /* Effetto scorrimento linea pulsante */
+        @keyframes scanline {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-200 font-['Space_Grotesk'] selection:bg-teal-500/30 overflow-x-hidden antialiased transition-colors duration-500">
+
+    <!-- Effetto Rumore (Noise) per texture -->
+    <div class="fixed inset-0 z-50 pointer-events-none opacity-[0.02] dark:opacity-[0.03]" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E');" aria-hidden="true"></div>
+
+    <!-- Intestazione Accessibile -->
+    <header class="fixed top-0 w-full py-4 px-6 md:px-12 border-b border-slate-200 dark:border-white/5 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md flex justify-between items-center z-50 transition-colors duration-500" role="banner">
+        <div class="flex items-center gap-3">
+            <!-- Logo Reef Jackal -->
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-400 to-blue-600 flex items-center justify-center shadow-[0_0_15px_rgba(20,184,166,0.4)]" aria-hidden="true">
+                <span class="font-['JetBrains_Mono'] font-bold text-white text-lg drop-shadow-md">RJ</span>
+            </div>
+            <span class="font-bold text-xl tracking-wider text-slate-900 dark:text-white">REEF<span class="text-teal-600 dark:text-teal-400">JACKAL</span></span>
+        </div>
+        
+        <!-- Navigazione Desktop -->
+        <nav class="hidden md:flex items-center gap-8 text-sm font-['JetBrains_Mono'] text-slate-600 dark:text-slate-300" aria-label="Menu principale">
+            <a href="#chi-sono" class="hover:text-teal-600 dark:hover:text-teal-400 focus:text-teal-500 transition-colors focus:outline-none focus:ring-2 focus:ring-teal-500 rounded px-2 py-1">Chi Sono</a>
+            <a href="#competenze" class="hover:text-teal-600 dark:hover:text-teal-400 focus:text-teal-500 transition-colors focus:outline-none focus:ring-2 focus:ring-teal-500 rounded px-2 py-1">Competenze</a>
+            <a href="#" onclick="openContactModal(); return false;" class="hover:text-teal-600 dark:hover:text-teal-400 focus:text-teal-500 transition-colors focus:outline-none focus:ring-2 focus:ring-teal-500 rounded px-2 py-1">Contatti</a>
+        </nav>
+
+        <!-- Azioni a destra (Tema + Contatti) -->
+        <div class="flex items-center gap-4">
+            <!-- Pulsante Switch Tema -->
+            <button id="theme-toggle" type="button" class="text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 focus:outline-none focus:ring-4 focus:ring-slate-200 dark:focus:ring-slate-700 rounded-lg text-sm p-2.5 transition-colors" aria-label="Cambia tema">
+                <!-- Icona Sole (Light Mode) -->
+                <svg id="theme-toggle-light-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+                <!-- Icona Luna (Dark Mode) -->
+                <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+            </button>
+
+            <!-- Pulsante Contatti (nascosto su mobile) -->
+            <button onclick="openContactModal()" class="hidden md:block px-5 py-2 rounded-lg border border-teal-500/50 text-teal-600 dark:text-teal-400 font-['JetBrains_Mono'] text-sm hover:bg-teal-50 dark:hover:bg-teal-500/10 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all">
+                Scrivimi
+            </button>
+        </div>
+    </header>
+
+    <main id="chi-sono">
+        <!-- Sezione Hero (Principale) -->
+        <section class="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden" aria-label="Introduzione">
+            
+            <!-- Sfondi animati (si adattano al tema) -->
+            <div class="absolute inset-0 bg-[radial-gradient(rgba(0,0,0,0.05)_2px,transparent_2px)] dark:bg-[radial-gradient(rgba(255,255,255,0.08)_2px,transparent_2px)] [background-size:40px_40px] animate-grid z-0 pointer-events-none opacity-50 dark:opacity-30 transition-all duration-500" aria-hidden="true"></div>
+            
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full max-w-5xl pointer-events-none z-0" aria-hidden="true">
+                <!-- Colori scuri per il tema chiaro, chiari per il tema scuro -->
+                <div class="absolute top-0 -left-10 w-96 h-96 bg-teal-400/30 dark:bg-teal-600/20 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-[100px] animate-blob"></div>
+                <div class="absolute top-20 -right-10 w-96 h-96 bg-blue-400/30 dark:bg-blue-500/20 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-[100px] animate-blob animation-delay-2000"></div>
+                <div class="absolute -bottom-20 left-1/4 w-96 h-96 bg-cyan-400/30 dark:bg-cyan-600/20 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-[100px] animate-blob animation-delay-4000"></div>
+            </div>
+
+            <div class="container mx-auto px-6 relative z-10 text-center animate-fade-in-up">
+                <!-- Badge stato -->
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-teal-100 dark:bg-teal-500/10 border border-teal-200 dark:border-teal-500/20 text-teal-700 dark:text-teal-400 text-xs font-['JetBrains_Mono'] mb-8 transition-colors">
+                    <span class="w-2 h-2 rounded-full bg-teal-500 dark:bg-teal-400 animate-pulse" aria-hidden="true"></span>
+                    Disponibile per nuovi progetti freelance
+                </div>
+                
+                <h1 class="text-5xl md:text-7xl font-extrabold text-transparent bg-clip-text bg-gradient-to-b from-slate-900 to-slate-500 dark:from-white dark:to-slate-300 mb-6 tracking-tight leading-tight max-w-4xl mx-auto transition-all">
+                    Ciao, sono Reef Jackal.<br>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-teal-500 via-cyan-500 to-blue-600 dark:from-teal-400 dark:via-cyan-400 dark:to-blue-500">Sviluppatore Creativo.</span>
+                </h1>
+                
+                <p class="text-lg md:text-xl text-slate-600 dark:text-slate-400 mb-12 max-w-2xl mx-auto font-light leading-relaxed transition-colors">
+                    Unisco design e codice per creare esperienze web immersive, accessibili e performanti. Trasformo idee complesse in interfacce eleganti.
+                </p>
+
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-6">
+                    <!-- 
+                      IL TASTO TRAPPOLA (Infallibile)
+                    -->
+                    <a 
+                        href="https://www.youtube.com/watch?v=bp4_7T9J6Fg&list=RDbp4_7T9J6Fg&start_radio=1" 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        class="group relative inline-flex items-center justify-center gap-3 bg-teal-500 hover:bg-teal-600 dark:hover:bg-teal-400 text-white dark:text-slate-950 font-bold py-4 px-10 rounded-xl shadow-[0_10px_30px_rgba(20,184,166,0.3)] dark:shadow-[0_0_30px_rgba(20,184,166,0.4)] transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-teal-500/50 overflow-hidden w-full sm:w-auto"
+                        aria-label="Scopri di più sulle mie conoscenze e competenze"
+                    >
+                        <div class="absolute inset-0 bg-white/30 skew-x-12 -translate-x-full group-hover:animate-[scanline_1.5s_ease-in-out_infinite] pointer-events-none"></div>
+                        
+                        <span class="relative z-10 text-lg">Scopri le mie conoscenze</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 relative z-10 transition-transform duration-300 group-hover:translate-x-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                        </svg>
+                    </a>
+                    
+                    <!-- Pulsante secondario vero (apre il modale) -->
+                    <button onclick="openContactModal()" class="inline-flex items-center justify-center gap-3 bg-white dark:bg-slate-800/50 hover:bg-slate-50 dark:hover:bg-slate-800 border border-slate-300 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-600 text-slate-800 dark:text-white font-semibold py-4 px-10 rounded-xl shadow-sm transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-slate-500/50 w-full sm:w-auto">
+                        Invia un'Email
+                    </button>
+                </div>
+                
+                <!-- Terminale personale (Questo rimane volutamente scuro anche in Light Mode per estetica) -->
+                <div class="mt-20 max-w-3xl mx-auto bg-[#0d1117] border border-slate-800 rounded-xl overflow-hidden shadow-2xl text-left" aria-hidden="true">
+                    <div class="flex items-center px-4 py-3 border-b border-slate-800/80 bg-[#161b22]">
+                        <div class="flex gap-2">
+                            <div class="w-3 h-3 rounded-full bg-red-500/80"></div>
+                            <div class="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+                            <div class="w-3 h-3 rounded-full bg-green-500/80"></div>
+                        </div>
+                        <div class="mx-auto font-['JetBrains_Mono'] text-xs text-slate-500">guest@reef-jackal: ~/portfolio</div>
+                    </div>
+                    <div class="p-6 font-['JetBrains_Mono'] text-sm sm:text-base leading-relaxed text-slate-400">
+                        <p><span class="text-teal-400">guest@reef-jackal</span>:<span class="text-blue-400">~</span>$ cat about.md</p>
+                        <p class="mt-2 text-slate-300">> Caricamento profilo...</p>
+                        <p class="mt-2">> Sono uno sviluppatore appassionato di interfacce utente e design di sistema.</p>
+                        <p class="mt-1">> Il mio obiettivo è scrivere codice pulito per creare esperienze accessibili a tutti.</p>
+                        <p class="mt-4"><span class="text-teal-400">guest@reef-jackal</span>:<span class="text-blue-400">~</span>$ npm run skills</p>
+                        <p class="text-emerald-400 mt-2">[OK] Compilazione tecnologie completata.</p>
+                        <p class="mt-2"><span class="text-teal-400">guest@reef-jackal</span>:<span class="text-blue-400">~</span>$ <span class="animate-pulse">_</span></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sezione Competenze -->
+        <section id="competenze" class="py-24 bg-white/50 dark:bg-slate-900/40 border-t border-slate-200 dark:border-white/5 relative z-10 transition-colors" aria-labelledby="skills-title">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-16">
+                    <h2 id="skills-title" class="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4">Cosa Faccio</h2>
+                    <p class="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">L'intersezione tra creatività tecnica e design funzionale. Ecco le mie aree di competenza principali.</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                    <!-- Competenza 1 -->
+                    <article class="bg-white dark:bg-black/40 border border-slate-200 dark:border-slate-800 p-8 rounded-2xl hover:border-teal-500/40 hover:shadow-xl dark:hover:shadow-none hover:-translate-y-1 transition-all duration-300">
+                        <div class="w-14 h-14 rounded-xl bg-blue-100 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center mb-6" aria-hidden="true">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">Sviluppo Frontend</h3>
+                        <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">Costruisco applicazioni web veloci e reattive utilizzando tecnologie moderne come React, Vue.js e framework CSS utility-first.</p>
+                    </article>
+                    
+                    <!-- Competenza 2 -->
+                    <article class="bg-white dark:bg-black/40 border border-slate-200 dark:border-slate-800 p-8 rounded-2xl hover:border-teal-500/40 hover:shadow-xl dark:hover:shadow-none hover:-translate-y-1 transition-all duration-300">
+                        <div class="w-14 h-14 rounded-xl bg-teal-100 dark:bg-teal-500/10 text-teal-600 dark:text-teal-400 flex items-center justify-center mb-6" aria-hidden="true">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">UI/UX Design</h3>
+                        <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">Progetto interfacce utente intuitive e sistemi di design coerenti, partendo da wireframe fino ad arrivare a prototipi interattivi ad alta fedeltà.</p>
+                    </article>
+                    
+                    <!-- Competenza 3 -->
+                    <article class="bg-white dark:bg-black/40 border border-slate-200 dark:border-slate-800 p-8 rounded-2xl hover:border-cyan-500/40 hover:shadow-xl dark:hover:shadow-none hover:-translate-y-1 transition-all duration-300">
+                        <div class="w-14 h-14 rounded-xl bg-cyan-100 dark:bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 flex items-center justify-center mb-6" aria-hidden="true">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">Accessibilità & SEO</h3>
+                        <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">Mi assicuro che ogni prodotto rispetti gli standard WCAG per l'accessibilità e sia ottimizzato per i motori di ricerca e le performance generali.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- MODAL CONTATTI (Nascosto di default) -->
+    <div id="contact-modal" class="fixed inset-0 z-[100] flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
+        <!-- Sfondo sfocato -->
+        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeContactModal()"></div>
+        
+        <!-- Contenitore del form -->
+        <div class="relative w-full max-w-4xl mx-4 bg-white dark:bg-slate-900 rounded-3xl shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-800 flex flex-col md:flex-row transform scale-95 transition-transform duration-300 z-10" id="modal-panel">
+            
+            <!-- Tasto Chiudi -->
+            <button onclick="closeContactModal()" class="absolute top-4 right-4 p-2 text-white/70 hover:text-white md:text-slate-500 md:hover:text-slate-800 md:dark:text-slate-400 md:dark:hover:text-white z-20 transition-colors bg-black/20 md:bg-transparent rounded-full" aria-label="Chiudi modale">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+
+            <!-- Info Contatto -->
+            <div class="bg-teal-600 dark:bg-slate-800 p-10 md:w-2/5 text-white flex flex-col justify-between">
+                <div>
+                    <h3 class="text-2xl font-bold mb-2">Parliamo del tuo progetto</h3>
+                    <p class="text-teal-100 dark:text-slate-400 text-sm mb-8">Compila il modulo o inviami un'email direttamente. Cerco sempre nuove sfide creative.</p>
+                    
+                    <div class="space-y-6">
+                        <div class="flex items-center gap-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-teal-300 dark:text-teal-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                            <span class="font-['JetBrains_Mono'] text-sm">ciao@reefjackal.com</span>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-teal-300 dark:text-teal-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                            <span class="font-['JetBrains_Mono'] text-sm">Milano, Italia (Remote)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form effettivo -->
+            <div class="p-10 md:w-3/5">
+                <!-- Utilizziamo Web3Forms per l'invio reale delle email senza server -->
+                <form id="contact-form" action="https://api.web3forms.com/submit" method="POST" class="space-y-6">
+                    
+                    <!-- ⚠️ INSERISCI LA TUA CHIAVE WEB3FORMS QUI SOTTO ⚠️ -->
+                    <input type="hidden" name="access_key" value="INSERISCI_QUI_LA_TUA_CHIAVE_WEB3FORMS">
+                    
+                    <div>
+                        <label for="nome" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Nome</label>
+                        <input type="text" id="nome" name="Nome" required class="w-full bg-slate-50 dark:bg-black/50 border border-slate-300 dark:border-slate-700 rounded-lg px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all" placeholder="Il tuo nome">
+                    </div>
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Email</label>
+                        <input type="email" id="email" name="Email" required class="w-full bg-slate-50 dark:bg-black/50 border border-slate-300 dark:border-slate-700 rounded-lg px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all" placeholder="tua@email.com">
+                    </div>
+                    <div>
+                        <label for="messaggio" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Messaggio</label>
+                        <textarea id="messaggio" name="Messaggio" rows="4" required class="w-full bg-slate-50 dark:bg-black/50 border border-slate-300 dark:border-slate-700 rounded-lg px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all" placeholder="Come posso aiutarti?"></textarea>
+                    </div>
+                    
+                    <button type="submit" id="submit-btn" class="w-full flex justify-center items-center gap-2 bg-slate-900 dark:bg-teal-500 hover:bg-slate-800 dark:hover:bg-teal-400 text-white dark:text-slate-950 font-bold py-3 px-6 rounded-lg transition-colors focus:outline-none focus:ring-4 focus:ring-slate-300 dark:focus:ring-teal-500/50">
+                        <span>Invia Messaggio</span>
+                    </button>
+                    
+                    <!-- Box per i messaggi di stato -->
+                    <div id="form-status" class="hidden"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Personale -->
+    <footer class="bg-slate-100 dark:bg-[#05080f] py-12 border-t border-slate-200 dark:border-white/5 z-10 relative transition-colors" role="contentinfo">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+                <div class="flex items-center gap-2">
+                    <span class="font-bold text-lg text-slate-900 dark:text-white tracking-widest">REEF<span class="text-teal-600 dark:text-teal-400">JACKAL</span></span>
+                </div>
+                <div class="text-slate-500 text-sm font-['JetBrains_Mono']">
+                    &copy; 2026 Reef Jackal. Fatto con codice e caffè.
+                </div>
+                <div class="flex gap-6 text-sm text-slate-600 dark:text-slate-400" aria-label="Social links">
+                    <a href="#" class="hover:text-teal-600 dark:hover:text-teal-400 focus:text-teal-500 transition-colors" aria-label="Profilo GitHub">GitHub</a>
+                    <a href="#" class="hover:text-teal-600 dark:hover:text-teal-400 focus:text-teal-500 transition-colors" aria-label="Profilo LinkedIn">LinkedIn</a>
+                    <a href="#" class="hover:text-teal-600 dark:hover:text-teal-400 focus:text-teal-500 transition-colors" aria-label="Profilo Twitter">Twitter</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- SCRIPT PER LA GESTIONE DEL DARK MODE -->
+    <script>
+        const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+        const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+        const themeToggleBtn = document.getElementById('theme-toggle');
+
+        // Controlla il tema al caricamento della pagina
+        // Ho impostato la classe "dark" nel tag HTML di default, quindi partiamo in dark mode.
+        if (document.documentElement.classList.contains('dark')) {
+            themeToggleLightIcon.classList.remove('hidden');
+        } else {
+            themeToggleDarkIcon.classList.remove('hidden');
+        }
+
+        // Ascolta il click sul pulsante
+        themeToggleBtn.addEventListener('click', function() {
+            // Inverti le icone
+            themeToggleDarkIcon.classList.toggle('hidden');
+            themeToggleLightIcon.classList.toggle('hidden');
+
+            // Se l'HTML ha la classe dark, rimuovila e salva light nel localStorage
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('color-theme', 'light');
+            } else {
+                // Altrimenti aggiungi dark e salva nel localStorage
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('color-theme', 'dark');
+            }
+        });
+
+        // Opzionale: Rispetta la preferenza di sistema al primo caricamento se l'utente torna
+        if (localStorage.getItem('color-theme') === 'light') {
+            document.documentElement.classList.remove('dark');
+            themeToggleDarkIcon.classList.remove('hidden');
+            themeToggleLightIcon.classList.add('hidden');
+        } else if (localStorage.getItem('color-theme') === 'dark') {
+            document.documentElement.classList.add('dark');
+            themeToggleLightIcon.classList.remove('hidden');
+            themeToggleDarkIcon.classList.add('hidden');
+        }
+
+        // --- GESTIONE MODALE CONTATTI ---
+        const modal = document.getElementById('contact-modal');
+        const modalPanel = document.getElementById('modal-panel');
+
+        function openContactModal() {
+            modal.classList.remove('hidden');
+            // Timeout per animare morbidamente
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modalPanel.classList.remove('scale-95');
+                modalPanel.classList.add('scale-100');
+            }, 10);
+            document.body.style.overflow = 'hidden'; // Blocca lo scroll della pagina
+        }
+
+        function closeContactModal() {
+            modal.classList.add('opacity-0');
+            modalPanel.classList.remove('scale-100');
+            modalPanel.classList.add('scale-95');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                document.body.style.overflow = ''; // Sblocca lo scroll
+            }, 300);
+        }
+
+        // Permetti di chiudere il popup col tasto ESC della tastiera
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && !modal.classList.contains('hidden')) {
+                closeContactModal();
+            }
+        });
+
+        // --- GESTIONE INVIO EMAIL IN TEMPO REALE ---
+        const contactForm = document.getElementById('contact-form');
+        const submitBtn = document.getElementById('submit-btn');
+        const formStatus = document.getElementById('form-status');
+
+        contactForm.addEventListener('submit', async function(e) {
+            e.preventDefault(); // Evita che la pagina si ricarichi
+            
+            // 1. Animazione di caricamento sul pulsante
+            const originalBtnText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<svg class="animate-spin h-5 w-5 text-white dark:text-slate-900" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> <span>Invio in corso...</span>';
+            submitBtn.disabled = true;
+            submitBtn.classList.add('opacity-70', 'cursor-not-allowed');
+            formStatus.classList.add('hidden');
+
+            const formData = new FormData(contactForm);
+            
+            // 2. Controllo di sicurezza se non hai ancora inserito la chiave
+            if(formData.get('access_key') === 'INSERISCI_QUI_LA_TUA_CHIAVE_WEB3FORMS') {
+                setTimeout(() => {
+                    formStatus.innerHTML = '⚠️ Modalità Demo: Inserisci la tua Access Key gratuita nel codice per ricevere le email!';
+                    formStatus.className = 'mt-4 block text-center rounded-lg p-3 text-sm font-semibold bg-amber-100 text-amber-800 border border-amber-200';
+                    submitBtn.innerHTML = originalBtnText;
+                    submitBtn.disabled = false;
+                    submitBtn.classList.remove('opacity-70', 'cursor-not-allowed');
+                }, 1000);
+                return;
+            }
+
+            // 3. Invio effettivo dei dati
+            try {
+                const response = await fetch('https://api.web3forms.com/submit', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+
+                if (data.success) {
+                    formStatus.innerHTML = '✅ Messaggio inviato! Ti risponderò a breve.';
+                    formStatus.className = 'mt-4 block text-center rounded-lg p-3 text-sm font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200';
+                    contactForm.reset(); // Pulisce il form
+                } else {
+                    formStatus.innerHTML = '❌ Errore durante l\'invio. Riprova.';
+                    formStatus.className = 'mt-4 block text-center rounded-lg p-3 text-sm font-semibold bg-red-100 text-red-800 border border-red-200';
+                }
+            } catch (error) {
+                formStatus.innerHTML = '❌ Problema di rete. Controlla la tua connessione internet.';
+                formStatus.className = 'mt-4 block text-center rounded-lg p-3 text-sm font-semibold bg-red-100 text-red-800 border border-red-200';
+            } finally {
+                // Ripristina il pulsante alla normalità
+                submitBtn.innerHTML = originalBtnText;
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('opacity-70', 'cursor-not-allowed');
+            }
+        });
+    </script>
+</body>
+</html>
